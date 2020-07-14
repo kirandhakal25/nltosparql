@@ -15,7 +15,7 @@ def get_user_triples(doc):
             subjects = subjects + ss
             predicates = predicates + ps
             objs = objs + os
-    return subjects, predicates, objs
+    return zip(subjects, predicates, objs)
 
 def compound_relational(doc):
     upos_string = ""
@@ -139,8 +139,6 @@ def break_compound_relational(doc, rule):
 
 def generate_triple_relational(query):
     doc = nlp(query)
-    print("==================Generate Triple RElation=====================")
-    print(doc.text)
     subjects = []
     objs = []
     predicates = []
@@ -170,8 +168,6 @@ def generate_triple_relational(query):
                 # If the word is a preposition then it gets added in the predicate
                 elif word.upos == "ADP":
                     predicate += word.text.capitalize()
-                    print("predicate", end=" ")
-                    print(predicate)
             # If next head noun should be object
             elif not subject_flag:
                 # But if the word is a verb then it is the first part of predicate
@@ -180,13 +176,8 @@ def generate_triple_relational(query):
                 # If the word is a preposition then it gets added in the predicate
                 elif word.upos == "ADP":
                     predicate += word.text.capitalize()
-        print("========Subject, Object==========")
-        print_triples(subjects, predicates, objs)
     return subjects, predicates, objs
 
-def print_triples(subjects, predicates, objs):
-    for (subject, predicate, obj) in zip(subjects, predicates, objs):
-        print(subject.text, predicate, obj.text)
 
 
 if __name__ == '__main__':
@@ -207,8 +198,7 @@ if __name__ == '__main__':
     triples = get_user_triples(doc)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
-        pass
-        # print(predicate)
-    # print("===============================================")
+        print(subject.text, predicate, obj.text)
+    print("===============================================")
 
 
