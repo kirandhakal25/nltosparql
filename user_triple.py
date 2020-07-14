@@ -80,6 +80,15 @@ def compound_relational(doc):
     # return True
 
 def break_compound_relational(doc, rule):
+    if rule == 1:
+        queries = break_with_rule_1(doc)
+    if rule == 2:
+        queries = break_with_rule_2(doc)
+
+    return queries
+
+
+def break_with_rule_1(doc):
     queries = []
     case_flag = True
     obl_flag = True
@@ -90,51 +99,85 @@ def break_compound_relational(doc, rule):
     wi = ""
     wj = ""
     wk = ""
-    if rule == 1:
-        for sentence in doc.sentences:
-            for word in sentence.words:
-                if word.deprel == "case" and case_flag:
-                    wi = sentence.words[word.head-1]
-                    wh = word
-                    case_flag = False
-                elif word.deprel == "obl" and obl_flag:
-                    we = sentence.words[word.head-1]
-                    wi = word
-                    obl_flag = False
-                elif word.deprel == "cc" and cc_flag:
-                    wk = sentence.words[word.head-1]
-                    wj = word
-                    cc_flag = False
-                elif word.deprel == "conj" and conj_flag:
-                    we = sentence.words[word.head-1]
-                    wk = word
-                    conj_flag = False
-        s1 = ""
-        s1_flag = True
-        s2 = ""
-        s2_flag = True
-        for sentence in doc.sentences:
-            for word in sentence.words:
-                # Conditions to change the flags
-                if word.text == we.text:
-                    s2_flag = False
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            if word.deprel == "case" and case_flag:
+                wi = sentence.words[word.head-1]
+                wh = word
+                case_flag = False
+            elif word.deprel == "obl" and obl_flag:
+                we = sentence.words[word.head-1]
+                wi = word
+                obl_flag = False
+            elif word.deprel == "cc" and cc_flag:
+                wk = sentence.words[word.head-1]
+                wj = word
+                cc_flag = False
+            elif word.deprel == "conj" and conj_flag:
+                we = sentence.words[word.head-1]
+                wk = word
+                conj_flag = False
+    s1 = ""
+    s1_flag = True
+    s2 = ""
+    s2_flag = True
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            # Conditions to change the flags
+            if word.text == we.text:
+                s2_flag = False
 
-                # Add words to Question s1
-                if s1_flag:
-                    s1 = s1 + " " + word.text
+            # Add words to Question s1
+            if s1_flag:
+                s1 = s1 + " " + word.text
 
-                # Add words to Question s2
-                if s2_flag:
-                    s2 = s2 + " " + word.text
+            # Add words to Question s2
+            if s2_flag:
+                s2 = s2 + " " + word.text
 
-                # Conditions to change the flags
-                if word.text == wi.text:
-                    s1_flag = False
-                if word.text == wj.text:
-                    s2_flag = True
+            # Conditions to change the flags
+            if word.text == wi.text:
+                s1_flag = False
+            if word.text == wj.text:
+                s2_flag = True
 
-        queries.append(s1.strip())
-        queries.append(s2.strip())
+    queries.append(s1.strip())
+    queries.append(s2.strip())
+    return queries
+
+def break_with_rule_2(doc):
+    queries = []
+    we = wh = wi = wj = ""
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            if word.deprel == "obj":
+                we = sentence.words[word.head-1]
+                wh = word
+            elif word.deprel == "cc":
+                wj = sentence.words[word.head-1]
+                wi = word
+    s1 = ""
+    s2 = ""
+    s1_flag = True
+    s2_flag = True
+
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            if word.text == wh.text:
+                s2_flag = False
+            elif word.text == wj.text:
+                s2_flag = True
+            if s1_flag:
+                s1 = s1 + " " + word.text
+            if s2_flag:
+                s2 = s2 + " " + word.text
+            if word.text == wh.text:
+                s1_flag = False
+            elif word.text == wj.text:
+                s2_flag = False
+
+    queries.append(s1.strip())
+    queries.append(s2.strip())
     return queries
 
 def generate_triple_relational(query):
@@ -192,9 +235,12 @@ if __name__ == '__main__':
     doc = nlp("Which professor teaches about Natural Language Understanding?")
     doc = nlp("Which female actor played in Casablanca and is married to writer born in Rome?")
     # doc = nlp("Which female actor is married to writer born in Rome and played in Casablanca")
-    # doc = nlp("Which river traverses Mississippi or Alaska")
+    doc = nlp("Which rivers traverse Mississippi or Alaska")
     # doc = nlp("Which rivers and lakes traverse Alaska")
     # doc = nlp("Which is the least and most populated state in America")
+    # for sentence in doc.sentences:
+    #     for word in sentence.words:
+    #         print(f'{word.text} \t {sentence.words[word.head-1].text} \t {word.deprel}')
     triples = get_user_triples(doc)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
