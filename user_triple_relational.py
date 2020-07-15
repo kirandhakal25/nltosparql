@@ -82,8 +82,14 @@ def compound_relational(doc):
 def break_compound_relational(doc, rule):
     if rule == 1:
         queries = break_with_rule_1(doc)
-    if rule == 2:
+    elif rule == 2:
         queries = break_with_rule_2(doc)
+    elif rule == 3:
+        queries = break_with_rule_3(doc)
+    elif rule == 4:
+        # This requires handling adjective part
+        # The queries are successfully broken into two but the triples aren't extracted. Encountered error.
+        queries = break_with_rule_4(doc)
 
     return queries
 
@@ -180,6 +186,93 @@ def break_with_rule_2(doc):
     queries.append(s2.strip())
     return queries
 
+
+def break_with_rule_3(doc):
+    queries = []
+    we = wh = wi = wj = ""
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            if word.deprel == "nsubj":
+                we = sentence.words[word.head - 1]
+                wh = word
+            elif word.deprel == "cc":
+                wh = sentence.words[word.head - 1]
+                wi = word
+            elif word.deprel == "conj":
+                wh = sentence.words[word.head - 1]
+                wj = word
+
+    s1 = ""
+    s2 = ""
+    s1_flag = True
+    s2_flag = True
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            if word.text == we.text:
+                s1_flag = True
+            elif word.text == wh.text:
+                s2_flag = False
+            elif word.text == wj.text:
+                s2_flag = True
+
+            if s1_flag:
+                s1 = s1 + " " + word.text
+            if s2_flag:
+                s2 = s2 + " " + word.text
+
+            if word.text == wh.text:
+                s1_flag = False
+
+    queries.append(s1.strip())
+    queries.append(s2.strip())
+    return queries
+
+def break_with_rule_4(doc):
+    queries = []
+    we = wh = wi = wj = ""
+    advmod_flag = 0
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            if word.deprel == "advmod" and advmod_flag == 0:
+                we = sentence.words[word.head - 1]
+                wh = word
+                advmod_flag += 1
+            elif word.deprel == "advmod" and advmod_flag == 1:
+                wj = word
+                advmod_flag += 1
+            elif word.deprel == "cc":
+                wj = sentence.words[word.head - 1]
+                wi = word
+            elif word.deprel == "conj":
+                wh = sentence.words[word.head - 1]
+                wj = word
+
+    s1 = ""
+    s2 = ""
+    s1_flag = True
+    s2_flag = True
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            if word.text == wh.text:
+                s2_flag = False
+            elif word.text == wj.text:
+                s2_flag = True
+
+            if s1_flag:
+                s1 = s1 + " " + word.text
+            if s2_flag:
+                s2 = s2 + " " + word.text
+
+            if word.text == wh.text:
+                s1_flag = False
+            elif word.text == wj.text:
+                s1_flag = True
+
+    queries.append(s1.strip())
+    queries.append(s2.strip())
+    return queries
+
+
 def generate_triple_relational(query):
     doc = nlp(query)
     subjects = []
@@ -236,8 +329,10 @@ if __name__ == '__main__':
     doc = nlp("Which female actor played in Casablanca and is married to writer born in Rome?")
     # doc = nlp("Which female actor is married to writer born in Rome and played in Casablanca")
     doc = nlp("Which rivers traverse Mississippi or Alaska")
-    # doc = nlp("Which rivers and lakes traverse Alaska")
-    # doc = nlp("Which is the least and most populated state in America")
+    doc = nlp("Which rivers and lakes traverse Alaska")
+    # doc = nlp("Which is the least and most populated state in America") # Dependency relation not correctly given by stanza
+    # Needs handling adjective part to handle most populated state and least populated state.
+    # doc = nlp("Which is the most and least populated state in America") # However, dependency relation given by stanza for this is correct
     # for sentence in doc.sentences:
     #     for word in sentence.words:
     #         print(f'{word.text} \t {sentence.words[word.head-1].text} \t {word.deprel}')
