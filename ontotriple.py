@@ -37,21 +37,28 @@ Reference case 2:
 
 # nltk.download('wordnet')
 def map_user_to_lexicon(lexicon, user_triple):
-    print("=====from map_user_to_lexicon=====")
+    # print("=====from map_user_to_lexicon=====")
     x_lexicon = user_to_lexicon_subject(lexicon, user_triple[0])
-    print("x_lexicon", x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
+    # print("x_lexicon", x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
     z_lexicon = user_to_lexicon_object(lexicon, user_triple[2])
-    print("z_lexicon", z_lexicon['label'], z_lexicon['associated_predicate'], z_lexicon['associated_subject'])
-    if (x_lexicon['associated_object'] == z_lexicon['label'] or x_lexicon['associated_object'] == lexicon.entries[z_lexicon['label']].type) and \
+    # print("z_lexicon", z_lexicon['associated_subject'], z_lexicon['associated_predicate'], z_lexicon['label'])
+    if x_lexicon['associated_object'] == z_lexicon['label'] and \
             x_lexicon['associated_predicate'] == z_lexicon['associated_predicate']:
-        print("Oh Yeah")
+        return(x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
+
+    elif x_lexicon['associated_object'] == lexicon.entries[z_lexicon['label']].type and \
+            x_lexicon['associated_predicate'] == z_lexicon['associated_predicate']:
+        return(x_lexicon['label'], x_lexicon['associated_predicate'], z_lexicon['label'])
+
+    elif lexicon.entries[x_lexicon['associated_object']].type == z_lexicon['label'] and \
+            x_lexicon['associated_predicate'] == z_lexicon['associated_predicate']:
+        return(x_lexicon['label'], x_lexicon['associated_predicate'], z_lexicon['label'])
     else:
-        print("Nay")
+        print("We don't understand your language. Please update the ontology")
 
 def user_to_lexicon_subject(input_lexicon, subject):
     min_med = 1000
     x_lexicon = ""
-    pprint.pprint(input_lexicon.entries['Course'].ontotriples)
     for entry in input_lexicon.entries:
         for ontotriple in input_lexicon.entries[entry].ontotriples:
             if ontotriple['category'] == "subject":
@@ -59,11 +66,6 @@ def user_to_lexicon_subject(input_lexicon, subject):
                 if med < min_med:
                     min_med = med
                     x_lexicon = ontotriple
-                    # x_lexicon = input_lexicon.entries[entry].label
-    print(subject, x_lexicon)
-    # z = input_lexicon.entries[x_lexicon].associated_object
-    #
-    # return input_lexicon.entries[x_lexicon]
     return x_lexicon
 
 def user_to_lexicon_object(input_lexicon, obj):
@@ -76,8 +78,6 @@ def user_to_lexicon_object(input_lexicon, obj):
                 if med < min_med:
                     min_med = med
                     z_lexicon = ontotriple
-                    # z_lexicon = input_lexicon.entries[entry].label
-    # return input_lexicon.entries[z_lexicon]
     return z_lexicon
 
 
@@ -210,19 +210,9 @@ if __name__ == '__main__':
 
     input_target = "instructor"
     input_user_triple = ("instructor", "teaches", "NLU")
+    # input_user_triple = ("ProfDung", "teach", "course")
     # instructor = wn.synset(f'{input_user_triple[0]}.n.01')
     result = map_user_to_lexicon(lexicon, input_user_triple)
-    # result = user_to_lexicon_subject(lexicon, input_user_triple[0])
-    triple_subject = None
-
-    # if result.ontotriple_category == "subject":
-    #     triple_subject = result
-
-    # triple_predicate = triple_subject.associated_predicate
-    # triple_object = triple_subject.associated_object
-
-    # query = f'select ?{input_target} where {{ {triple_subject.label} {triple_predicate} {triple_object} . }}'
-
-    print("=========RESULTS=============")
-    # print(query)
-    print("End")
+    print("===========RESULTS============")
+    print(result)
+    print("=============End==============")
