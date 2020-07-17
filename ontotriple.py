@@ -58,7 +58,7 @@ def map_user_to_lexicon(lexicon, user_triple):
         if z_lexicon['associated_predicate'] == y_lexicon['label']:
             return (user_triple[0], z_lexicon['associated_predicate'], z_lexicon['label'])
     else:
-        print("We don't understand your language. Please update the ontology")
+        raise Exception("We don't understand your language. Please update the ontology")
 
 def user_to_lexicon_subject(input_lexicon, subject):
     min_med = 1000
@@ -123,6 +123,27 @@ instr_entry_args = {
     ]
 }
 
+assistant_entry_args = {
+    'label': 'Assistant',
+    'part_of_speech': 'noun',
+    'type': 'Class',
+    'ontotriples':
+    [
+        {
+            'label': 'Assistant',
+            'category': 'subject',
+            'associated_predicate': 'teaches',
+            'associated_object': 'Course'
+        },
+        {
+            'label': 'Assistant',
+            'category': 'object',
+            'associated_predicate': 'isTaughtBy',
+            'associated_subject': 'Course'
+        }
+    ]
+}
+
 teach_entry_args = {
     'label': 'teaches',
     'part_of_speech': 'verb',
@@ -149,6 +170,36 @@ is_taught_by_entry_args = {
             'category': 'predicate',
             'associated_subject': 'course',
             'associated_object': 'instructor'
+        }
+    ]
+}
+
+assist_entry_args = {
+    'label': 'assists',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'assists',
+            'category': 'predicate',
+            'associated_subject': 'Assistant',
+            'associated_object': 'Course'
+        }
+    ]
+}
+
+is_assisted_by_entry_args = {
+    'label': 'isAssistedBy',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'isAssistedBy',
+            'category': 'predicate',
+            'associated_subject': 'course',
+            'associated_object': 'Assistant'
         }
     ]
 }
@@ -240,6 +291,27 @@ matt_entry_args = {
         ]
 }
 
+wae_entry_args = {
+    'label': 'WAE',
+    'part_of_speech': 'noun',
+    'type': 'Course',
+    'ontotriples':
+    [
+        {
+            'label': 'WAE',
+            'category': 'object',
+            'associated_predicate': 'teaches',
+            'associated_subject': 'ProfMatt'
+        },
+        {
+            'label': 'WAE',
+            'category': 'subject',
+            'associated_predicate': 'isTaughtBy',
+            'associated_object': 'ProfMatt'
+        }
+    ]
+}
+
 dung_entry_args = {
     'label': 'ProfDung',
     'part_of_speech': 'noun',
@@ -266,6 +338,8 @@ lexicon.add_entry(LexicalEntry(**teach_entry_args))
 lexicon.add_entry(LexicalEntry(**course_entry_args))
 lexicon.add_entry(LexicalEntry(**nlu_entry_args))
 lexicon.add_entry(LexicalEntry(**dung_entry_args))
+lexicon.add_entry(LexicalEntry(**assistant_entry_args))
+lexicon.add_entry(LexicalEntry(**wae_entry_args))
 
 
 if __name__ == '__main__':
