@@ -37,21 +37,32 @@ Reference case 2:
 
 # nltk.download('wordnet')
 def map_user_to_lexicon(lexicon, user_triple):
-    print("=====from map_user_to_lexicon=====")
+    # print("=====from map_user_to_lexicon=====")
     x_lexicon = user_to_lexicon_subject(lexicon, user_triple[0])
-    print("x_lexicon", x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
+    # print("x_lexicon", x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
+    y_lexicon = user_to_lexicon_predicate(lexicon, user_triple[1])
     z_lexicon = user_to_lexicon_object(lexicon, user_triple[2])
-    print("z_lexicon", z_lexicon['label'], z_lexicon['associated_predicate'], z_lexicon['associated_subject'])
-    if (x_lexicon['associated_object'] == z_lexicon['label'] or x_lexicon['associated_object'] == lexicon.entries[z_lexicon['label']].type) and \
+    # print("z_lexicon", z_lexicon['associated_subject'], z_lexicon['associated_predicate'], z_lexicon['label'])
+    if x_lexicon['associated_object'] == z_lexicon['label'] and \
             x_lexicon['associated_predicate'] == z_lexicon['associated_predicate']:
-        print("Oh Yeah")
+        return(x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
+
+    elif x_lexicon['associated_object'] == lexicon.entries[z_lexicon['label']].type and \
+            x_lexicon['associated_predicate'] == z_lexicon['associated_predicate']:
+        return(x_lexicon['label'], x_lexicon['associated_predicate'], z_lexicon['label'])
+
+    elif lexicon.entries[x_lexicon['associated_object']].type == z_lexicon['label'] and \
+            x_lexicon['associated_predicate'] == z_lexicon['associated_predicate']:
+        return(x_lexicon['label'], x_lexicon['associated_predicate'], z_lexicon['label'])
+    elif (user_triple[0].startswith("?wh")) or (user_triple[0].startswith("?how")):
+        if z_lexicon['associated_predicate'] == y_lexicon['label']:
+            return (user_triple[0], z_lexicon['associated_predicate'], z_lexicon['label'])
     else:
-        print("Nay")
+        print("We don't understand your language. Please update the ontology")
 
 def user_to_lexicon_subject(input_lexicon, subject):
     min_med = 1000
     x_lexicon = ""
-    pprint.pprint(input_lexicon.entries['Course'].ontotriples)
     for entry in input_lexicon.entries:
         for ontotriple in input_lexicon.entries[entry].ontotriples:
             if ontotriple['category'] == "subject":
@@ -59,12 +70,21 @@ def user_to_lexicon_subject(input_lexicon, subject):
                 if med < min_med:
                     min_med = med
                     x_lexicon = ontotriple
-                    # x_lexicon = input_lexicon.entries[entry].label
-    print(subject, x_lexicon)
-    # z = input_lexicon.entries[x_lexicon].associated_object
-    #
-    # return input_lexicon.entries[x_lexicon]
     return x_lexicon
+
+
+def user_to_lexicon_predicate(input_lexicon, pred):
+    min_med = 1000
+    y_lexicon = ""
+    for entry in input_lexicon.entries:
+        for ontotriple in input_lexicon.entries[entry].ontotriples:
+            if ontotriple['category'] == "predicate":
+                med = nltk.edit_distance(pred.lower(), input_lexicon.entries[entry].label.lower())
+                if med < min_med:
+                    min_med = med
+                    y_lexicon = ontotriple
+    return y_lexicon
+
 
 def user_to_lexicon_object(input_lexicon, obj):
     min_med = 1000
@@ -76,11 +96,31 @@ def user_to_lexicon_object(input_lexicon, obj):
                 if med < min_med:
                     min_med = med
                     z_lexicon = ontotriple
-                    # z_lexicon = input_lexicon.entries[entry].label
-    # return input_lexicon.entries[z_lexicon]
     return z_lexicon
 
 
+def find_target_position(user_triple, target):
+    result = None
+    position = 0
+
+    for idx, term in enumerate(user_triple):
+        if target == term.lower():
+            position = idx
+            result = term
+    return result, position
+
+
+def evaluate_type(triple, target):
+    _, target_position = find_target_position(triple, target)
+
+    variable = "?" + triple[target_position].lower()
+    type_declaration = (variable, "rdf:type", target.capitalize())
+
+    triple_list = list(triple)
+    triple_list.pop(target_position)
+    triple_list.insert(target_position, variable)
+
+    return type_declaration, tuple(triple_list)
 
 
 # Constructing lexicon
@@ -207,47 +247,22 @@ lexicon.add_entry(LexicalEntry(**nlu_entry_args))
 lexicon.add_entry(LexicalEntry(**dung_entry_args))
 
 
-def find_target_position(user_triple, target):
-    result = None
-    position = 0
-    
-    for idx, term in enumerate(user_triple):
-        if target == term.lower():
-            position = idx
-            result = term
-    return result, position
-
-
-def evaluate_type(triple, target):
-    _, target_position = find_target_position(triple, target)
-
-    variable = "?" + triple[target_position].lower()
-    type_declaration = (variable, "rdf:type", target.capitalize())
-
-    triple_list = list(triple)
-    triple_list.pop(target_position)
-    triple_list.insert(target_position, variable)
-
-    return type_declaration, tuple(triple_list)
-
-    # ?instructor a Instructor .
-
-
 if __name__ == '__main__':
+    input_target = "instructor"
+    input_user_triple = ("instructor", "teaches", "NLU")
 
-        input_target = "instructor"
-        input_user_triple = ("?who", "teaches", "NLU")
+    # triple_subject = None
+    #
+    # sample_ontology_triple = ("Instructor", "teaches", "NLU")
+    #
+    # triples = evaluate_type(sample_ontology_triple, input_target)
+    #
+    # # If multiple triples, make a list of triples and pass iteratively
+    #
+    # query = f'SELECT ?{input_target} WHERE {{ {triples[0]} }}'
 
-        triple_subject = None
+    ontology_triple = map_user_to_lexicon(lexicon, input_user_triple)
 
-        sample_ontology_triple = ("Instructor", "teaches", "NLU")
-    
-        triples = evaluate_type(sample_ontology_triple, input_target)
-
-        # If multiple triples, make a list of triples and pass iteratively
-
-        query = f'SELECT ?{input_target} WHERE {{ {triples[0]} }}'
-    
-        print("=========RESULTS=============")
-        # print(query)
-        print("End")
+    print("===========RESULTS============")
+    print(ontology_triple)
+    print("=============End==============")

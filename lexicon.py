@@ -4,7 +4,7 @@ class LexicalEntry:
 
         self.part_of_speech = kwargs.get("part_of_speech")
         self.type = kwargs.get("type")
-        self.ontotriple_category = kwargs.get("ontotriple_category")
+        self.ontotriples = kwargs.get("ontotriples")
 
         self.associated_predicate = kwargs.get("associated_predicate")
         self.associated_object = kwargs.get("associated_object")
