@@ -1,6 +1,7 @@
 import stanza
 import re
 
+
 def get_user_triples(doc):
     subjects = []
     predicates = []
@@ -15,6 +16,16 @@ def get_user_triples(doc):
             subjects = subjects + ss
             predicates = predicates + ps
             objs = objs + os
+    elif doc.text.capitalize().startswith("Who"):
+        ss, ps, os = generate_triple_who_relational(doc.text)
+        subjects = subjects + ss
+        predicates = predicates + ps
+        objs = objs + os
+    else:
+        ss, ps, os = generate_triple_relational(doc.text)
+        subjects = subjects + ss
+        predicates = predicates + ps
+        objs = objs + os
     return zip(subjects, predicates, objs)
 
 def compound_relational(doc):
@@ -285,14 +296,14 @@ def generate_triple_relational(query):
             # if the word is a head noun (noun or proper noun)
             if word.upos == 'NOUN' or word.upos == "PROPN":
                 if subject_flag:
-                    subjects.append(word)
+                    subjects.append(word.text)
                     subject_flag = False
                 elif not subject_flag:
-                    objs.append(word)
+                    objs.append(word.text)
                     predicates.append(predicate)
                     predicate = ""
                     subject_flag = True
-                    obj = word
+                    obj = word.text
             # if next head noun should be subject
             elif subject_flag:
                 # But if the word is verb then last obj should be the next subject as well
@@ -315,6 +326,28 @@ def generate_triple_relational(query):
     return subjects, predicates, objs
 
 
+def generate_triple_who_relational(query):
+    doc = nlp(query)
+    subjects = []
+    objs = []
+    predicates = []
+    predicate = ""
+    subject_flag = True
+
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            print(f'{word.text} \t {sentence.words[word.head - 1].text} \t {word.deprel}')
+            if word.deprel == 'nsubj':
+                subjects.append("?" + word.text)
+            if word.deprel == 'obj':
+                objs.append(word.text)
+            if word.deprel == 'root':
+                predicates.append(word.text)
+            # if (word.deprel == 'conj') and sentence.words[word.head - 1].text == targets[0].text:
+            #     targets.append(word)
+
+    return subjects, predicates, objs
+
 
 if __name__ == '__main__':
     param_dict = {
@@ -329,7 +362,7 @@ if __name__ == '__main__':
     doc = nlp("Which female actor played in Casablanca and is married to writer born in Rome?")
     # doc = nlp("Which female actor is married to writer born in Rome and played in Casablanca")
     doc = nlp("Which rivers traverse Mississippi or Alaska")
-    doc = nlp("Which rivers and lakes traverse Alaska")
+    doc = nlp("who killed Caesar?")
     # doc = nlp("Which is the least and most populated state in America") # Dependency relation not correctly given by stanza
     # Needs handling adjective part to handle most populated state and least populated state.
     # doc = nlp("Which is the most and least populated state in America") # However, dependency relation given by stanza for this is correct
@@ -339,7 +372,7 @@ if __name__ == '__main__':
     triples = get_user_triples(doc)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
-        print(subject.text, predicate, obj.text)
+        print(subject, predicate, obj)
     print("===============================================")
 
 

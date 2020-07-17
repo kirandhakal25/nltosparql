@@ -1,0 +1,15 @@
+# relational queries
+Who teaches NLU?
+What killed Caesar?
+Which instructor teaches NLU?
+
+
+# non-relational queries
+What does ProfDung teach?
+Where is AIT?
+Who is NLU taught by?
+Who is the instructor of NLU?
+Who are the instructors of NLU and DSA?
+What is the highest building in AIT?
+How many students are there in AIT?
+

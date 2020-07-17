@@ -206,23 +206,48 @@ lexicon.add_entry(LexicalEntry(**course_entry_args))
 lexicon.add_entry(LexicalEntry(**nlu_entry_args))
 lexicon.add_entry(LexicalEntry(**dung_entry_args))
 
+
+def find_target_position(user_triple, target):
+    result = None
+    position = 0
+    
+    for idx, term in enumerate(user_triple):
+        if target == term.lower():
+            position = idx
+            result = term
+    return result, position
+
+
+def evaluate_type(triple, target):
+    _, target_position = find_target_position(triple, target)
+
+    variable = "?" + triple[target_position].lower()
+    type_declaration = (variable, "rdf:type", target.capitalize())
+
+    triple_list = list(triple)
+    triple_list.pop(target_position)
+    triple_list.insert(target_position, variable)
+
+    return type_declaration, tuple(triple_list)
+
+    # ?instructor a Instructor .
+
+
 if __name__ == '__main__':
 
-    input_target = "instructor"
-    input_user_triple = ("instructor", "teaches", "NLU")
-    # instructor = wn.synset(f'{input_user_triple[0]}.n.01')
-    result = map_user_to_lexicon(lexicon, input_user_triple)
-    # result = user_to_lexicon_subject(lexicon, input_user_triple[0])
-    triple_subject = None
+        input_target = "instructor"
+        input_user_triple = ("?who", "teaches", "NLU")
 
-    # if result.ontotriple_category == "subject":
-    #     triple_subject = result
+        triple_subject = None
 
-    # triple_predicate = triple_subject.associated_predicate
-    # triple_object = triple_subject.associated_object
+        sample_ontology_triple = ("Instructor", "teaches", "NLU")
+    
+        triples = evaluate_type(sample_ontology_triple, input_target)
 
-    # query = f'select ?{input_target} where {{ {triple_subject.label} {triple_predicate} {triple_object} . }}'
+        # If multiple triples, make a list of triples and pass iteratively
 
-    print("=========RESULTS=============")
-    # print(query)
-    print("End")
+        query = f'SELECT ?{input_target} WHERE {{ {triples[0]} }}'
+    
+        print("=========RESULTS=============")
+        # print(query)
+        print("End")

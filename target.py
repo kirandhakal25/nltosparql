@@ -13,6 +13,7 @@ def get_targets(doc):
                 targets.append(word)
     return targets
 
+
 if __name__ == '__main__':
     param_dict = {
         'lang': 'en',
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     doc = nlp("Who is the instructor, TA and secretary of NLU?")
     # doc = nlp("Which German actor was killed in a road crash?")                           #Question for Equation 2a
     # doc = nlp("Which German actor and musician and artist was killed in a road crash?")   #Question for Equation 2b
-    doc = nlp("What is the book and resource you are referring to?")
+    doc = nlp("Who teaches NLU?")
     print(doc.text)
     targets = get_targets(doc)
     print("===============TARGETS IDENTIFIED====================")
