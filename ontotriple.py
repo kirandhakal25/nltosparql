@@ -195,6 +195,51 @@ nlu_entry_args = {
     ]
 }
 
+matt_entry_args = {
+    'label': 'ProfMatt',
+    'part_of_speech': 'noun',
+    'type': 'instructor',
+    'ontotriples':
+        [
+            {
+                'label': 'ProfMatt',
+                'category': 'subject',
+                'associated_predicate': 'teaches',
+                'associated_object': 'ML'
+            },
+            {
+                'label': 'ProfMatt',
+                'category': 'object',
+                'associated_predicate': 'isTaughtBy',
+                'associated_subject': 'ML'
+            },
+            {
+                'label': 'ProfMatt',
+                'category': 'subject',
+                'associated_predicate': 'teaches',
+                'associated_object': 'WAE'
+            },
+            {
+                'label': 'ProfMatt',
+                'category': 'object',
+                'associated_predicate': 'isTaughtBy',
+                'associated_subject': 'WAE'
+            },
+            {
+                'label': 'ProfMatt',
+                'category': 'subject',
+                'associated_predicate': 'teaches',
+                'associated_object': 'MachineVision'
+            },
+            {
+                'label': 'ProfMatt',
+                'category': 'object',
+                'associated_predicate': 'isTaughtBy',
+                'associated_subject': 'MachineVision'
+            }
+        ]
+}
+
 dung_entry_args = {
     'label': 'ProfDung',
     'part_of_speech': 'noun',
