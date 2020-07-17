@@ -99,30 +99,6 @@ def user_to_lexicon_object(input_lexicon, obj):
     return z_lexicon
 
 
-def find_target_position(user_triple, target):
-    result = None
-    position = 0
-
-    for idx, term in enumerate(user_triple):
-        if target == term.lower():
-            position = idx
-            result = term
-    return result, position
-
-
-def evaluate_type(triple, target):
-    _, target_position = find_target_position(triple, target)
-
-    variable = "?" + triple[target_position].lower()
-    type_declaration = (variable, "rdf:type", target.capitalize())
-
-    triple_list = list(triple)
-    triple_list.pop(target_position)
-    triple_list.insert(target_position, variable)
-
-    return type_declaration, tuple(triple_list)
-
-
 # Constructing lexicon
 lexicon = Lexicon()
 
