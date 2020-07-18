@@ -1,6 +1,7 @@
 from lexicon import Lexicon, LexicalEntry
 import stanza
 import nltk
+from lexicon_ontology import lexicon
 from nltk.corpus import wordnet as wn
 import pprint
 
