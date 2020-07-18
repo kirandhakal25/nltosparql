@@ -2,7 +2,7 @@ import stanza
 import re
 
 
-def get_user_triples_non_relational(doc, pipeline):
+def get_user_triples_non_relational(doc, pipeline, targets):
     subjects = []
     predicates = []
     objs = []
@@ -16,14 +16,14 @@ def get_user_triples_non_relational(doc, pipeline):
         queries, cc = break_compound_non_reln(doc, rule)
         # print(queries)
         for query in queries:
-            ss, ps, os = generate_triple_non_reln(query, pipeline)
+            ss, ps, os = generate_triple_non_reln(query, pipeline, targets[0])
             # print(ss)
             # print(ps)
             subjects = subjects + ss
             predicates = predicates + ps
             objs = objs + os
     else:
-        ss, ps, os = generate_triple_non_reln(doc.text, pipeline)
+        ss, ps, os = generate_triple_non_reln(doc.text, pipeline, targets[0])
         # print(ss)
         # print(ps)
         subjects = subjects + ss
@@ -243,7 +243,7 @@ def break_compound_non_reln(doc, rule):
         return queries, cc
 
 
-def generate_triple_non_reln(query, pipeline):
+def generate_triple_non_reln(query, pipeline, target):
     doc = pipeline(query)
     subjects = []
     objects = []
@@ -288,7 +288,7 @@ def generate_triple_non_reln(query, pipeline):
                         objects.append(wy.text)
 
         predicates.append(pred)
-        subjects.append('?who')
+        subjects.append(target.capitalize())
 
     # print(subjects)
     # print(predicates)

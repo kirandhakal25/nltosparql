@@ -24,6 +24,12 @@ instr_entry_args = {
             'category': 'object',
             'associated_predicate': 'isTaughtBy',
             'associated_subject': 'Course'
+        },
+        {
+            'label': 'Instructor',
+            'category': 'subject',
+            'associated_predicate': 'isInstructorOf',
+            'associated_object': 'Course'
         }
     ]
 }
@@ -45,6 +51,12 @@ assistant_entry_args = {
             'category': 'object',
             'associated_predicate': 'isTaughtBy',
             'associated_subject': 'Course'
+        },
+        {
+            'label': 'Assistant',
+            'category': 'subject',
+            'associated_predicate': 'isAssistantOf',
+            'associated_object': 'Course'
         }
     ]
 }
@@ -88,7 +100,22 @@ is_instructor_of_entry_args = {
         {
             'label': 'isInstructorOf',
             'category': 'predicate',
-            'associated_subject': 'Instructor',
+            'associated_subject': 'Assistant',
+            'associated_object': 'Course'
+        }
+    ]
+}
+
+is_assistant_of_entry_args = {
+    'label': 'isAssistantOf',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'isAssistantOf',
+            'category': 'predicate',
+            'associated_subject': 'Assistant',
             'associated_object': 'Course'
         }
     ]
@@ -141,6 +168,12 @@ course_entry_args = {
             'category': 'subject',
             'associated_predicate': 'isTaughtBy',
             'associated_object': 'Instructor'
+        },
+        {
+            'label': 'Course',
+            'category': 'object',
+            'associated_predicate': 'isAssistantOf',
+            'associated_subject': 'Assistant'
         }
     ]
 }
@@ -162,6 +195,18 @@ nlu_entry_args = {
             'category': 'subject',
             'associated_predicate': 'isTaughtBy',
             'associated_object': 'ProfDung'
+        },
+        {
+            'label': 'NLU',
+            'category': 'object',
+            'associated_predicate': 'isInstructorOf',
+            'associated_subject': 'ProfDung'
+        },
+        {
+            'label': 'NLU',
+            'category': 'object',
+            'associated_predicate': 'isAssistantOf',
+            'associated_subject': 'Joe'
         }
     ]
 }
@@ -199,6 +244,12 @@ matt_entry_args = {
             {
                 'label': 'ProfMatt',
                 'category': 'subject',
+                'associated_predicate': 'isInstructorOf',
+                'associated_object': 'WAE'
+            },
+            {
+                'label': 'ProfMatt',
+                'category': 'subject',
                 'associated_predicate': 'teaches',
                 'associated_object': 'MachineVision'
             },
@@ -228,6 +279,12 @@ wae_entry_args = {
             'category': 'subject',
             'associated_predicate': 'isTaughtBy',
             'associated_object': 'ProfMatt'
+        },
+        {
+            'label': 'WAE',
+            'category': 'object',
+            'associated_predicate': 'isInstructorOf',
+            'associated_subject': 'ProfMatt'
         }
     ]
 }
@@ -249,6 +306,12 @@ dung_entry_args = {
             'category': 'object',
             'associated_predicate': 'isTaughtBy',
             'associated_subject': 'NLU'
+        },
+        {
+            'label': 'ProfDung',
+            'category': 'subject',
+            'associated_predicate': 'isInstructorOf',
+            'associated_object': 'NLU'
         }
     ]
 }
@@ -262,14 +325,6 @@ lexicon.add_entries([
     matt_entry_args,
     assistant_entry_args,
     is_instructor_of_entry_args,
+    is_assistant_of_entry_args,
     wae_entry_args
 ])
-
-# lexicon.add_entry(LexicalEntry(**instr_entry_args))
-# lexicon.add_entry(LexicalEntry(**teach_entry_args))
-# lexicon.add_entry(LexicalEntry(**course_entry_args))
-# lexicon.add_entry(LexicalEntry(**nlu_entry_args))
-# lexicon.add_entry(LexicalEntry(**dung_entry_args))
-# lexicon.add_entry(LexicalEntry(**matt_entry_args))
-# lexicon.add_entry(LexicalEntry(**assistant_entry_args))
-# lexicon.add_entry(LexicalEntry(**wae_entry_args))

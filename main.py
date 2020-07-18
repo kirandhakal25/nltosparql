@@ -74,7 +74,7 @@ if __name__ == "__main__":
     if relational(text):
         triples = get_user_triples_relational(text, nlp)
     else:
-        triples = get_user_triples_non_relational(text, nlp)
+        triples = get_user_triples_non_relational(text, nlp, targets)
 
     user_triples = []
     print("\nUser triples: ")
