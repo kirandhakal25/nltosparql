@@ -13,3 +13,7 @@ Who are the instructors of NLU and DSA?
 What is the highest building in AIT?
 How many students are there in AIT?
 
+# Issues currently
+What teaches NLU? -> Getting x lexicon with med is getting WAE.
+Which instructor teaches NLU and DSA? -> not enough targets
+

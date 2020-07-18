@@ -2,7 +2,7 @@ import stanza
 import re
 
 
-def get_user_triples(doc):
+def get_user_triples(doc, pipeline):
     subjects = []
     predicates = []
     objs = []
@@ -19,19 +19,19 @@ def get_user_triples(doc):
     is_compound, rule = compound_relational(doc)
     if is_compound:
         queries = break_compound_relational(doc, rule)
-        print(queries)
+        # print(queries)
         for query in queries:
-            ss, ps, os = generate_triple_relational(query)
+            ss, ps, os = generate_triple_relational(query, pipeline)
             subjects = subjects + ss
             predicates = predicates + ps
             objs = objs + os
-    elif doc.text.capitalize().startswith("Who"):
-        ss, ps, os = generate_triple_who_relational(doc.text)
+    elif doc.text.capitalize().startswith("Wh"):
+        ss, ps, os = generate_triple_who_relational(doc.text, pipeline)
         subjects = subjects + ss
         predicates = predicates + ps
         objs = objs + os
     else:
-        ss, ps, os = generate_triple_relational(doc.text)
+        ss, ps, os = generate_triple_relational(doc.text, pipeline)
         subjects = subjects + ss
         predicates = predicates + ps
         objs = objs + os
@@ -293,8 +293,8 @@ def break_with_rule_4(doc):
     return queries
 
 
-def generate_triple_relational(query):
-    doc = nlp(query)
+def generate_triple_relational(query, pipeline):
+    doc = pipeline(query)
     subjects = []
     objs = []
     predicates = []
@@ -335,8 +335,8 @@ def generate_triple_relational(query):
     return subjects, predicates, objs
 
 
-def generate_triple_who_relational(query):
-    doc = nlp(query)
+def generate_triple_who_relational(query, pipeline):
+    doc = pipeline(query)
     subjects = []
     objs = []
     predicates = []
@@ -347,11 +347,11 @@ def generate_triple_who_relational(query):
         for word in sentence.words:
             print(f'{word.text} \t {sentence.words[word.head - 1].text} \t {word.deprel}')
             if word.deprel == 'nsubj':
-                subjects.append("?" + word.text)
+                subjects.append("?" + word.text.lower())
             if word.deprel == 'obj':
                 objs.append(word.text)
             if word.deprel == 'root':
-                predicates.append(word.text)
+                predicates.append(word.text.lower())
             # if (word.deprel == 'conj') and sentence.words[word.head - 1].text == targets[0].text:
             #     targets.append(word)
 
@@ -392,7 +392,7 @@ if __name__ == '__main__':
     # for sentence in doc.sentences:
     #     for word in sentence.words:
     #         print(f'{word.text} \t {sentence.words[word.head-1].text} \t {word.deprel}')
-    triples = get_user_triples(doc)
+    triples = get_user_triples(doc, nlp)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
         print(subject, predicate, obj)
