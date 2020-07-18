@@ -1,7 +1,8 @@
 import stanza
 import re
 
-def get_user_triples(doc, pipeline):
+
+def get_user_triples_non_relational(doc, pipeline):
     subjects = []
     predicates = []
     objs = []
@@ -242,7 +243,6 @@ def break_compound_non_reln(doc, rule):
         return queries, cc
 
 
-
 def generate_triple_non_reln(query, pipeline):
     doc = pipeline(query)
     subjects = []
@@ -273,22 +273,22 @@ def generate_triple_non_reln(query, pipeline):
                     wy = word.text
                     prep_flag = False
                     pred = wx.text + '_' + wy
-                    subjects.append(wz)
+                    objects.append(wz)
                 elif word.text == 'in':
                     pred = wx.text
                     wz = sentence.words[word.head - 1].text
 
-                    subjects.append(wz)
+                    objects.append(wz)
                     # print('--------')
                     # print(word.deprel, word.text, '-', word.head, '-', sentence.words[word.head - 1].text)
                 elif word.text == "'s":
                     wy = sentence.words[word.head - 1]
                     if sentence.words[wy.head - 1].text == wx.text:
                         pred = wx.text
-                        subjects.append(wy.text)
+                        objects.append(wy.text)
 
         predicates.append(pred)
-        objects.append('?k')
+        subjects.append('?who')
 
     # print(subjects)
     # print(predicates)
@@ -316,7 +316,7 @@ if __name__ == '__main__':
     # doc = nlp("Who are the TA and professors of NLU and DSA?")
 
 
-    triples = get_user_triples(doc, nlp)
+    triples = get_user_triples_non_relational(doc, nlp)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
         print(subject, predicate, obj)

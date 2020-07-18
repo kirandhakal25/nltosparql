@@ -2,7 +2,7 @@ import stanza
 import re
 
 
-def get_user_triples(doc, pipeline):
+def get_user_triples_relational(doc, pipeline):
     subjects = []
     predicates = []
     objs = []

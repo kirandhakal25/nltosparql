@@ -35,6 +35,7 @@ Reference case 2:
     }
 """
 
+
 # nltk.download('wordnet')
 def map_user_to_lexicon(lexicon, user_triple):
     # print("=====from map_user_to_lexicon=====")
@@ -42,6 +43,7 @@ def map_user_to_lexicon(lexicon, user_triple):
     # print("x_lexicon", x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
     y_lexicon = user_to_lexicon_predicate(lexicon, user_triple[1])
     z_lexicon = user_to_lexicon_object(lexicon, user_triple[2])
+    print("")
     # print("z_lexicon", z_lexicon['associated_subject'], z_lexicon['associated_predicate'], z_lexicon['label'])
     if x_lexicon['associated_object'] == z_lexicon['label'] and \
             x_lexicon['associated_predicate'] == z_lexicon['associated_predicate']:
@@ -100,252 +102,12 @@ def user_to_lexicon_object(input_lexicon, obj):
 
 
 # Constructing lexicon
-lexicon = Lexicon()
-
-instr_entry_args = {
-    'label': 'Instructor',
-    'part_of_speech': 'noun',
-    'type': 'Class',
-    'ontotriples':
-    [
-        {
-            'label': 'Instructor',
-            'category': 'subject',
-            'associated_predicate': 'teaches',
-            'associated_object': 'Course'
-        },
-        {
-            'label': 'Instructor',
-            'category': 'object',
-            'associated_predicate': 'isTaughtBy',
-            'associated_subject': 'Course'
-        }
-    ]
-}
-
-assistant_entry_args = {
-    'label': 'Assistant',
-    'part_of_speech': 'noun',
-    'type': 'Class',
-    'ontotriples':
-    [
-        {
-            'label': 'Assistant',
-            'category': 'subject',
-            'associated_predicate': 'teaches',
-            'associated_object': 'Course'
-        },
-        {
-            'label': 'Assistant',
-            'category': 'object',
-            'associated_predicate': 'isTaughtBy',
-            'associated_subject': 'Course'
-        }
-    ]
-}
-
-teach_entry_args = {
-    'label': 'teaches',
-    'part_of_speech': 'verb',
-    'type': 'predicate',
-    'ontotriples':
-    [
-        {
-            'label': 'teaches',
-            'category': 'predicate',
-            'associated_subject': 'Instructor',
-            'associated_object': 'Course'
-        }
-    ]
-}
-
-is_taught_by_entry_args = {
-    'label': 'isTaughtBy',
-    'part_of_speech': 'verb',
-    'type': 'predicate',
-    'ontotriples':
-    [
-        {
-            'label': 'isTaughtBy',
-            'category': 'predicate',
-            'associated_subject': 'course',
-            'associated_object': 'instructor'
-        }
-    ]
-}
-
-assist_entry_args = {
-    'label': 'assists',
-    'part_of_speech': 'verb',
-    'type': 'predicate',
-    'ontotriples':
-    [
-        {
-            'label': 'assists',
-            'category': 'predicate',
-            'associated_subject': 'Assistant',
-            'associated_object': 'Course'
-        }
-    ]
-}
-
-is_assisted_by_entry_args = {
-    'label': 'isAssistedBy',
-    'part_of_speech': 'verb',
-    'type': 'predicate',
-    'ontotriples':
-    [
-        {
-            'label': 'isAssistedBy',
-            'category': 'predicate',
-            'associated_subject': 'course',
-            'associated_object': 'Assistant'
-        }
-    ]
-}
-
-course_entry_args = {
-    'label': 'Course',
-    'part_of_speech': 'noun',
-    'type': 'class',
-    'ontotriples':
-    [
-        {
-            'label': 'Course',
-            'category': 'object',
-            'associated_predicate': 'teaches',
-            'associated_subject': 'Instructor'
-        },
-        {
-            'label': 'Course',
-            'category': 'subject',
-            'associated_predicate': 'isTaughtBy',
-            'associated_object': 'Instructor'
-        }
-    ]
-}
-
-nlu_entry_args = {
-    'label': 'NLU',
-    'part_of_speech': 'noun',
-    'type': 'Course',
-    'ontotriples':
-    [
-        {
-            'label': 'NLU',
-            'category': 'object',
-            'associated_predicate': 'teaches',
-            'associated_subject': 'ProfDung'
-        },
-        {
-            'label': 'NLU',
-            'category': 'subject',
-            'associated_predicate': 'isTaughtBy',
-            'associated_object': 'ProfDung'
-        }
-    ]
-}
-
-matt_entry_args = {
-    'label': 'ProfMatt',
-    'part_of_speech': 'noun',
-    'type': 'instructor',
-    'ontotriples':
-        [
-            {
-                'label': 'ProfMatt',
-                'category': 'subject',
-                'associated_predicate': 'teaches',
-                'associated_object': 'ML'
-            },
-            {
-                'label': 'ProfMatt',
-                'category': 'object',
-                'associated_predicate': 'isTaughtBy',
-                'associated_subject': 'ML'
-            },
-            {
-                'label': 'ProfMatt',
-                'category': 'subject',
-                'associated_predicate': 'teaches',
-                'associated_object': 'WAE'
-            },
-            {
-                'label': 'ProfMatt',
-                'category': 'object',
-                'associated_predicate': 'isTaughtBy',
-                'associated_subject': 'WAE'
-            },
-            {
-                'label': 'ProfMatt',
-                'category': 'subject',
-                'associated_predicate': 'teaches',
-                'associated_object': 'MachineVision'
-            },
-            {
-                'label': 'ProfMatt',
-                'category': 'object',
-                'associated_predicate': 'isTaughtBy',
-                'associated_subject': 'MachineVision'
-            }
-        ]
-}
-
-wae_entry_args = {
-    'label': 'WAE',
-    'part_of_speech': 'noun',
-    'type': 'Course',
-    'ontotriples':
-    [
-        {
-            'label': 'WAE',
-            'category': 'object',
-            'associated_predicate': 'teaches',
-            'associated_subject': 'ProfMatt'
-        },
-        {
-            'label': 'WAE',
-            'category': 'subject',
-            'associated_predicate': 'isTaughtBy',
-            'associated_object': 'ProfMatt'
-        }
-    ]
-}
-
-dung_entry_args = {
-    'label': 'ProfDung',
-    'part_of_speech': 'noun',
-    'type': 'instructor',
-    'ontotriples':
-    [
-        {
-            'label': 'ProfDung',
-            'category': 'subject',
-            'associated_predicate': 'teaches',
-            'associated_object': 'NLU'
-        },
-        {
-            'label': 'ProfDung',
-            'category': 'object',
-            'associated_predicate': 'isTaughtBy',
-            'associated_subject': 'NLU'
-        }
-    ]
-}
-
-lexicon.add_entry(LexicalEntry(**instr_entry_args))
-lexicon.add_entry(LexicalEntry(**teach_entry_args))
-lexicon.add_entry(LexicalEntry(**course_entry_args))
-lexicon.add_entry(LexicalEntry(**nlu_entry_args))
-lexicon.add_entry(LexicalEntry(**dung_entry_args))
-lexicon.add_entry(LexicalEntry(**matt_entry_args))
-lexicon.add_entry(LexicalEntry(**assistant_entry_args))
-lexicon.add_entry(LexicalEntry(**wae_entry_args))
+# moved to lexicon_ontology.py
 
 
 if __name__ == '__main__':
     input_target = "instructor"
-    input_user_triple = ("instructor", "teaches", "NLU")
+    input_user_triple = ("?who", "instructor_of", "NLU")
 
     # triple_subject = None
     #

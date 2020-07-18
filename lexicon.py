@@ -30,3 +30,9 @@ class Lexicon:
 
     def add_entry(self, entry: LexicalEntry):
         self.entries[entry.label] = entry
+
+    # list of dicts
+    def add_entries(self, entry_list: list):
+        for entry_dict in entry_list:
+            self.add_entry(LexicalEntry(**entry_dict))
+

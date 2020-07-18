@@ -1,13 +1,15 @@
 import argparse
 from target import get_targets
-from user_triple_relational import get_user_triples
-from ontotriple import map_user_to_lexicon, lexicon
+from user_triple_relational import get_user_triples_relational
+from user_triple_non_relational import get_user_triples_non_relational
+from ontotriple import map_user_to_lexicon
+from lexicon_ontology import lexicon
 from query_construction import construct_query
 import stanza
 import re
 
 
-def type_of_question(doc):
+def relational(doc):
     relational_patterns = [
         "DET NOUN VERB PROPN",
         "PRON VERB PROPN",
@@ -29,13 +31,12 @@ def type_of_question(doc):
     for pattern in relational_patterns:
         rel = bool(re.search(pattern, upos_sentence))
         if rel:
-            return "relational"
+            return True
     for pattern in non_relational_patterns:
         rel = bool(re.search(pattern, upos_sentence))
         if rel:
-            return "non_relational"
+            return False
     return rel
-
 
 
 if __name__ == "__main__":
@@ -54,7 +55,7 @@ if __name__ == "__main__":
 
     nlp = stanza.Pipeline(**param_dict)
     text = nlp(args.input)
-    rel = type_of_question(text)
+
     # Identify targets
     # and extract string from word object
     target_words = get_targets(text)
@@ -68,10 +69,12 @@ if __name__ == "__main__":
     print("")
     [print("Targets identified: ", target) for target in targets]
 
-
-
     # Get user triples
-    triples = get_user_triples(text, nlp)
+
+    if relational(text):
+        triples = get_user_triples_relational(text, nlp)
+    else:
+        triples = get_user_triples_non_relational(text, nlp)
 
     user_triples = []
     print("\nUser triples: ")
