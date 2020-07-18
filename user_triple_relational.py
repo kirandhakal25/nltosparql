@@ -12,10 +12,16 @@ def get_user_triples(doc, pipeline):
         queries = break_compound_relational(doc, rule)
         # print(queries)
         for query in queries:
-            ss, ps, os = generate_triple_relational(query, pipeline)
-            subjects = subjects + ss
-            predicates = predicates + ps
-            objs = objs + os
+            if not query.lower().startswith("wh"):
+                ss, ps, os = generate_triple_relational(query, pipeline)
+                subjects = subjects + ss
+                predicates = predicates + ps
+                objs = objs + os
+            else:
+                ss, ps, os = generate_triple_who_relational(query, pipeline)
+                subjects = subjects + ss
+                predicates = predicates + ps
+                objs = objs + os
     elif doc.text.capitalize().startswith("Wh"):
         ss, ps, os = generate_triple_who_relational(doc.text, pipeline)
         subjects = subjects + ss

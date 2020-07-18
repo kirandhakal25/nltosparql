@@ -338,6 +338,7 @@ lexicon.add_entry(LexicalEntry(**teach_entry_args))
 lexicon.add_entry(LexicalEntry(**course_entry_args))
 lexicon.add_entry(LexicalEntry(**nlu_entry_args))
 lexicon.add_entry(LexicalEntry(**dung_entry_args))
+lexicon.add_entry(LexicalEntry(**matt_entry_args))
 lexicon.add_entry(LexicalEntry(**assistant_entry_args))
 lexicon.add_entry(LexicalEntry(**wae_entry_args))
 

@@ -1,7 +1,7 @@
 import stanza
 import re
 
-def get_user_triples(doc):
+def get_user_triples(doc, pipeline):
     subjects = []
     predicates = []
     objs = []
@@ -15,14 +15,14 @@ def get_user_triples(doc):
         queries, cc = break_compound_non_reln(doc, rule)
         # print(queries)
         for query in queries:
-            ss, ps, os = generate_triple_non_reln(query)
+            ss, ps, os = generate_triple_non_reln(query, pipeline)
             # print(ss)
             # print(ps)
             subjects = subjects + ss
             predicates = predicates + ps
             objs = objs + os
     else:
-        ss, ps, os = generate_triple_non_reln(doc.text)
+        ss, ps, os = generate_triple_non_reln(doc.text, pipeline)
         # print(ss)
         # print(ps)
         subjects = subjects + ss
@@ -243,8 +243,8 @@ def break_compound_non_reln(doc, rule):
 
 
 
-def generate_triple_non_reln(query):
-    doc = nlp(query)
+def generate_triple_non_reln(query, pipeline):
+    doc = pipeline(query)
     subjects = []
     objects = []
     predicates = []
@@ -309,7 +309,7 @@ if __name__ == '__main__':
     doc = nlp("Who is the professor and TA of NLU?")
 
 
-    triples = get_user_triples(doc)
+    triples = get_user_triples(doc, nlp)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
         print(subject, predicate, obj)

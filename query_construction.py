@@ -26,15 +26,27 @@ def construct_query(triples, targets):
     # make query triples for inside where clause {}
     query_triples = []
     # not enough target for query -> Which instructor teaches NLU and WAE?
-    for input_triple, target in zip(triples, targets):
-        if not input_triple[0].startswith("?who"):
-            # if not who question
-            ontology_triple = evaluate_type(input_triple, target)
-        else:
-            # if other questions
-            ontology_triple = input_triple
 
-        query_triples.append(ontology_triple)
+    if len(targets) == len(triples):
+        for input_triple, target in zip(triples, targets):
+            if not input_triple[0].startswith("?wh"):
+                # if not wh question
+                ontology_triple = evaluate_type(input_triple, target)
+            else:
+                # if other questions
+                ontology_triple = input_triple
+
+            query_triples.append(ontology_triple)
+    elif len(targets) == 1:
+        for input_triple in triples:
+            if not input_triple[0].startswith("?wh"):
+                # if not wh question
+                ontology_triple = evaluate_type(input_triple, targets[0])
+            else:
+                # if other questions
+                ontology_triple = input_triple
+
+            query_triples.append(ontology_triple)
 
     # concatenate targets into ?x ?y for before where clause
     target_string = ""
@@ -60,9 +72,9 @@ def construct_query(triples, targets):
 
 
 if __name__ == '__main__':
-    input_targets = ["instructor", "assistant"]
+    input_targets = ["instructor"]
     input_ontology_triple = ("Instructor", "teaches", "NLU")
-    input_ontology_triple2 = ("Assistant", "teaches", "NLU")
+    input_ontology_triple2 = ("Instructor", "teaches", "WAE")
 
     input_triples = [input_ontology_triple, input_ontology_triple2]
 
