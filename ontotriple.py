@@ -46,7 +46,10 @@ def map_user_to_lexicon(lexicon, user_triple):
     z_lexicon = user_to_lexicon_object(lexicon, user_triple[2], y_lexicon['label'])
     print("")
     # print("z_lexicon", z_lexicon['associated_subject'], z_lexicon['associated_predicate'], z_lexicon['label'])
-    if x_lexicon['associated_object'] == z_lexicon['label'] and \
+    if (user_triple[0].startswith("?wh")) or (user_triple[0].startswith("?how")):
+        if z_lexicon['associated_predicate'] == y_lexicon['label']:
+            return (user_triple[0], z_lexicon['associated_predicate'], z_lexicon['label'])
+    elif x_lexicon['associated_object'] == z_lexicon['label'] and \
             x_lexicon['associated_predicate'] == z_lexicon['associated_predicate'] and \
             x_lexicon['associated_predicate'] == y_lexicon['label']:
         return(x_lexicon['label'], x_lexicon['associated_predicate'], x_lexicon['associated_object'])
@@ -60,9 +63,6 @@ def map_user_to_lexicon(lexicon, user_triple):
             x_lexicon['associated_predicate'] == z_lexicon['associated_predicate'] and \
             x_lexicon['associated_predicate'] == y_lexicon['label']:
         return(x_lexicon['label'], x_lexicon['associated_predicate'], z_lexicon['label'])
-    elif (user_triple[0].startswith("?wh")) or (user_triple[0].startswith("?how")):
-        if z_lexicon['associated_predicate'] == y_lexicon['label']:
-            return (user_triple[0], z_lexicon['associated_predicate'], z_lexicon['label'])
     else:
         raise Exception("We don't understand your language. Please update the ontology")
 

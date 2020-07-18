@@ -16,7 +16,8 @@ def relational(doc):
         "NOUN VERB ADP PROPN",
         "PRON VERB ADP PROPN",
         "NOUN VERB ADP DET NOUN",
-        "CCONJ NOUN VERB PROPN"
+        "CCONJ NOUN VERB PROPN",
+        ".* (PROPN|NOUN) VERB$"
     ]
     non_relational_patterns = [
         "PRON AUX PROPN PART NOUN",
@@ -54,7 +55,10 @@ if __name__ == "__main__":
     }
 
     nlp = stanza.Pipeline(**param_dict)
-    text = nlp(args.input)
+
+    text = args.input
+    text = text.strip('?')
+    text = nlp(text)
 
     # Identify targets
     # and extract string from word object
