@@ -6,6 +6,15 @@ def get_user_triples(doc, pipeline):
     subjects = []
     predicates = []
     objs = []
+    upos_sentence = ""
+    query_ending_with_verb_pattern = "ADP .* (PROPN)|(NOUN) VERB$"
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            upos_sentence += word.upos + " "
+    upos_sentence = upos_sentence.strip()
+    query_ending_with_verb = bool(re.search(query_ending_with_verb_pattern, upos_sentence))
+    print(upos_sentence)
+    print(query_ending_with_verb)
 
     is_compound, rule = compound_relational(doc)
     if is_compound:
@@ -354,6 +363,19 @@ def generate_triple_who_relational(query, pipeline):
 
     return subjects, predicates, objs
 
+# def generate_triple_relational_verbend(query):
+#     doc = nlp(query)
+#     subjects = []
+#     objs = []
+#     predicates = []
+#     predicate = ""
+#
+#     for sentence in doc.sentences:
+#         for word in sentence.words:
+#             print(f'{word.text} \t {sentence.words[word.head - 1].text} \t {word.deprel}')
+#
+
+
 
 if __name__ == '__main__':
     param_dict = {
@@ -369,6 +391,7 @@ if __name__ == '__main__':
     # doc = nlp("Which female actor is married to writer born in Rome and played in Casablanca")
     doc = nlp("Which rivers traverse Mississippi or Alaska")
     doc = nlp("who killed Caesar?")
+    doc = nlp("In which continent does the Nile traverse")
     # doc = nlp("Which is the least and most populated state in America") # Dependency relation not correctly given by stanza
     # Needs handling adjective part to handle most populated state and least populated state.
     # doc = nlp("Which is the most and least populated state in America") # However, dependency relation given by stanza for this is correct

@@ -4,6 +4,39 @@ from user_triple_relational import get_user_triples
 from ontotriple import map_user_to_lexicon, lexicon
 from query_construction import construct_query
 import stanza
+import re
+
+
+def type_of_question(doc):
+    relational_patterns = [
+        "DET NOUN VERB PROPN",
+        "PRON VERB PROPN",
+        "NOUN VERB ADP PROPN",
+        "PRON VERB ADP PROPN",
+        "NOUN VERB ADP DET NOUN",
+        "CCONJ NOUN VERB PROPN"
+    ]
+    non_relational_patterns = [
+        "PRON AUX PROPN PART NOUN",
+        "PRON AUX DET ADJ CCONJ ADJ NOUN"
+    ]
+    rel = False
+    upos_sentence = ""
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            upos_sentence = upos_sentence + word.upos + " "
+    upos_sentence = upos_sentence.strip()
+    for pattern in relational_patterns:
+        rel = bool(re.search(pattern, upos_sentence))
+        if rel:
+            return "relational"
+    for pattern in non_relational_patterns:
+        rel = bool(re.search(pattern, upos_sentence))
+        if rel:
+            return "non_relational"
+    return rel
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='NL to SPARQL interface.')
@@ -21,7 +54,7 @@ if __name__ == "__main__":
 
     nlp = stanza.Pipeline(**param_dict)
     text = nlp(args.input)
-
+    rel = type_of_question(text)
     # Identify targets
     # and extract string from word object
     target_words = get_targets(text)
@@ -34,6 +67,8 @@ if __name__ == "__main__":
 
     print("")
     [print("Targets identified: ", target) for target in targets]
+
+
 
     # Get user triples
     triples = get_user_triples(text, nlp)
@@ -58,4 +93,5 @@ if __name__ == "__main__":
     print(construct_query(ontology_triples, targets))
 
     print("\nFinished conversion.")
+
 
