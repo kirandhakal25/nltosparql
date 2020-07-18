@@ -53,7 +53,9 @@ if __name__ == "__main__":
     }
 
     nlp = stanza.Pipeline(**param_dict)
-    text = nlp(args.input)
+    text = args.input
+    text.strip('?')
+    text = nlp(text)
     rel = type_of_question(text)
     # Identify targets
     # and extract string from word object
