@@ -251,21 +251,22 @@ def generate_triple_non_reln(query):
     pred = ""
     subject_flag = True
     prep_flag = True
+    cop_flag = True
     wz= ''
     for sentence in doc.sentences:
         for word in sentence.words:
             if word.deprel == 'root':
                 root = word
-    for sentence in doc.sentences:
-        for word in sentence.words:
+
             if word.deprel == 'nsubj' and subject_flag:
                 if word.upos == 'NOUN':
                     wx = word
                 elif word.upos == 'PRON':
                     wx = root
-                # print(wx)
                 subject_flag = False
-            # print(word.text, word.upos, word.deprel, '-', word.head, '-', sentence.words[word.head - 1].text)
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            # print(word.text, word.deprel, '-', word.head, '-', sentence.words[word.head - 1].text)
             if word.deprel == 'case' and prep_flag:
                 if word.text == 'of':
                     wz = sentence.words[word.head - 1].text
@@ -280,7 +281,11 @@ def generate_triple_non_reln(query):
                     subjects.append(wz)
                     # print('--------')
                     # print(word.deprel, word.text, '-', word.head, '-', sentence.words[word.head - 1].text)
-
+                elif word.text == "'s":
+                    wy = sentence.words[word.head - 1]
+                    if sentence.words[wy.head - 1].text == wx.text:
+                        pred = wx.text
+                        subjects.append(wy.text)
 
         predicates.append(pred)
         objects.append('?k')
@@ -304,9 +309,11 @@ if __name__ == '__main__':
     # doc = nlp("Which is the shortest and longest river in America?")
     # doc = nlp("Who are the professors of NLU and DSA?")
     # doc = nlp("Which is the highest mountain in Germany?")
-    # doc = nlp("What is Angela's birth name?")
+    doc = nlp("What is Angela's birth name?")
     # doc = nlp("Which rivers and lakes traverse Alaska")
-    doc = nlp("Who is the professor and TA of NLU?")
+    # doc = nlp("Who is the professor and TA of NLU?")
+    # doc = nlp("What is the salary of Dung?")
+    # doc = nlp("Who are the TA and professors of NLU and DSA?")
 
 
     triples = get_user_triples(doc)
