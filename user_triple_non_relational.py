@@ -9,13 +9,12 @@ def get_user_triples_non_relational(doc, pipeline, targets):
     objs = []
 
     is_compound, rule = compound_non_reln(doc)
-    # for sentence in doc.sentences:
-    #     for word in sentence.words:
-    #         print(word.text, word.upos)
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            print(word.text, word.upos)
 
     if is_compound:
         queries, cc = break_compound_non_reln(doc, rule)
-        # print(queries)
         for query in queries:
             ss, ps, os = generate_triple_non_reln(query, pipeline, targets[0])
             # print(ss)
@@ -38,10 +37,10 @@ def compound_non_reln(doc):
     rule = 0
 
     compound_upos_patterns_rule_1 = [
-        "AUX (DET)? NOUN CCONJ NOUN",
-        "AUX (DET)? NOUN CCONJ PROPN",
-        "AUX (DET)? PROPN CCONJ NOUN",
-        "AUX (DET)? PROPN CCONJ PROPN"
+        "AUX ?(DET)? NOUN CCONJ NOUN",
+        "AUX ?(DET)? NOUN CCONJ PROPN",
+        "AUX ?(DET)? PROPN CCONJ NOUN",
+        "AUX ?(DET)? PROPN CCONJ PROPN"
     ]
 
     compound_upos_patterns_rule_2 = [
@@ -49,7 +48,7 @@ def compound_non_reln(doc):
     ]
 
     compound_upos_patterns_rule_3 = [
-        "AUX (DET)? NOUN ADP PROPN CCONJ PROPN"
+        "AUX ?(DET)? ?(ADJ)? NOUN ADP PROPN CCONJ PROPN",
     ]
 
     for sentence in doc.sentences:
@@ -191,8 +190,6 @@ def break_compound_non_reln(doc, rule):
         conj_flag = True
         for sentence in doc.sentences:
             for word in sentence.words:
-                # print(word.text, '-', sentence.words[word.head - 1].text, word.deprel)
-
                 if word.deprel == 'cc' and cc_flag:
                     wi = word
                     # print('------------')
@@ -253,21 +250,25 @@ def generate_triple_non_reln(query, pipeline, target):
     subject_flag = True
     prep_flag = True
     cop_flag = True
+    amod_flag = True
     wz= ''
     for sentence in doc.sentences:
         for word in sentence.words:
             if word.deprel == 'root':
                 root = word
-
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            # print(word.text, word.deprel, '-', word.head, '-', sentence.words[word.head - 1].text)
             if word.deprel == 'nsubj' and subject_flag:
                 if word.upos == 'NOUN':
                     wx = word
                 elif word.upos == 'PRON':
                     wx = root
                 subject_flag = False
+            if word.deprel == 'amod' and amod_flag == True:
+                mod = word
     for sentence in doc.sentences:
         for word in sentence.words:
-            # print(word.text, word.deprel, '-', word.head, '-', sentence.words[word.head - 1].text)
             if word.deprel == 'case' and prep_flag:
                 if word.text == 'of':
                     wz = sentence.words[word.head - 1].text
@@ -276,18 +277,18 @@ def generate_triple_non_reln(query, pipeline, target):
                     pred = wx.text + '_' + wy
                     objects.append(wz)
                 elif word.text == 'in':
-                    pred = wx.text
+                    pred = wx.text + '(' + mod.text + ')'
                     wz = sentence.words[word.head - 1].text
-
                     objects.append(wz)
+
                     # print('--------')
                     # print(word.deprel, word.text, '-', word.head, '-', sentence.words[word.head - 1].text)
-                elif word.text == "'s":
+                elif word.text == "'s" and cop_flag:
                     wy = sentence.words[word.head - 1]
                     if sentence.words[wy.head - 1].text == wx.text:
                         pred = wx.text
+                        cop_flag = False
                         objects.append(wy.text)
-
         predicates.append(pred)
         subjects.append(target.capitalize())
 
@@ -307,7 +308,6 @@ if __name__ == '__main__':
         'pos_batch_size': 3000
     }
     nlp = stanza.Pipeline(**param_dict)
-    # doc = nlp("What is the population and area of the most populated state?")
     # doc = nlp("Which is the shortest and longest river in America?")
     # doc = nlp("Who are the professors of NLU and DSA?")
     doc = nlp("Which is the highest mountain in Germany?")
@@ -315,7 +315,7 @@ if __name__ == '__main__':
     # doc = nlp("Which rivers and lakes traverse Alaska")
     # doc = nlp("Who is the professor and TA of NLU?")
     # doc = nlp("What is the salary of Dung?")
-    # doc = nlp("Who are the TA and professors of NLU and DSA?")
+    # doc = nlp("What is the longest river in Nepal and India?")
 
     target_words = target.get_targets(doc)
     targets = []
