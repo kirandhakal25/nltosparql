@@ -54,7 +54,6 @@ def verbend(doc):
     for pattern in verb_upos_patterns:
         vend = bool(re.search(pattern, upos_string))
         if vend:
-            print(vend)
             return vend
     return vend
 
@@ -391,7 +390,7 @@ def generate_triple_relational_verbend(query, pipeline):
     for sentence in doc.sentences:
         for word in sentence.words:
             # print(f'{word.text} \t {sentence.words[word.head - 1].text} \t {word.deprel} \t {word.upos}')
-            if word.deprel == 'obl':
+            if word.deprel == 'obl' or word.deprel == 'obj':
                 we = sentence.words[word.head - 1].text
                 wh = word.text
             elif word.deprel == 'root':
@@ -427,9 +426,10 @@ if __name__ == '__main__':
     # for sentence in doc.sentences:
     #     for word in sentence.words:
     #         print(f'{word.text} \t {sentence.words[word.head-1].text} \t {word.deprel}')
-    doc = nlp("In which continent does the Nile traverse?")
-    # triples = generate_triple_relational_verbend(query)
-    triples = get_user_triples(doc, nlp)
+    doc = nlp("In which continent does the Nile traverse")
+    doc = nlp("Which course does ProfDung teach")
+    # triples = generate_triple_relational_verbend(doc.text, nlp)
+    triples = get_user_triples_relational(doc, nlp)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
         print(subject, predicate, obj)
