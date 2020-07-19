@@ -310,7 +310,7 @@ if __name__ == '__main__':
     nlp = stanza.Pipeline(**param_dict)
     # doc = nlp("Which is the shortest and longest river in America?")
     # doc = nlp("Who are the professors of NLU and DSA?")
-    doc = nlp("Which is the highest mountain in Germany?")
+    doc = nlp("Who is the oldest instructor in ICT?")
     # doc = nlp("What is Angela's birth name?")
     # doc = nlp("Which rivers and lakes traverse Alaska")
     # doc = nlp("Who is the professor and TA of NLU?")

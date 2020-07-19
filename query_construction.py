@@ -13,7 +13,7 @@ def evaluate_type(triple, target):
     _, target_position = find_target_position(triple, target)
 
     variable = "?" + triple[target_position].lower()
-    type_declaration = (variable, "rdf:type", target.capitalize())
+    type_declaration = (variable, "rdf:type", target.strip("s").capitalize())
 
     triple_list = list(triple)
     triple_list.pop(target_position)

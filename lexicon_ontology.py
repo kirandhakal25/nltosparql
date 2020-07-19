@@ -55,6 +55,36 @@ dept_entry_args = {
     ]
 }
 
+integer_entry_args = {
+    'label': 'integer',
+    'part_of_speech': 'verb',
+    'type': 'object',
+    'ontotriples':
+    [
+        {
+            'label': 'integer',
+            'category': 'object',
+            'associated_subject': 'Instructor',
+            'associated_predicate': 'age'
+        }
+    ]
+}
+
+age_entry_args = {
+    'label': 'age',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'age',
+            'category': 'predicate',
+            'associated_subject': 'Instructor',
+            'associated_object': 'integer'
+        }
+    ]
+}
+
 offers_entry_args = {
     'label': 'offers',
     'part_of_speech': 'verb',
@@ -151,8 +181,23 @@ is_instructor_of_entry_args = {
         {
             'label': 'isInstructorOf',
             'category': 'predicate',
-            'associated_subject': 'Assistant',
+            'associated_subject': 'Instructor',
             'associated_object': 'Course'
+        }
+    ]
+}
+
+is_instructor_in_entry_args = {
+    'label': 'isInstructorIn',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'isInstructorIn',
+            'category': 'predicate',
+            'associated_subject': 'Instructor',
+            'associated_object': 'Department'
         }
     ]
 }
