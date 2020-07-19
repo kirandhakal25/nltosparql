@@ -65,7 +65,7 @@ if __name__ == "__main__":
     target_words = get_targets(text)
     targets = []
     for target_word in target_words:
-        targets.append(target_word.text.lower())
+        targets.append(target_word.text.strip("s").lower())
 
     print("\nStarting program...")
     print("\nGot input question: ", args.input)

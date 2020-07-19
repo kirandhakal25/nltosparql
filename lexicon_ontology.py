@@ -51,6 +51,12 @@ dept_entry_args = {
             'category': 'object',
             'associated_predicate': 'isOfferedBy',
             'associated_subject': 'Course'
+        },
+        {
+            'label': 'Department',
+            'category': 'object',
+            'associated_predicate': 'isCourseIn',
+            'associated_subject': 'Course'
         }
     ]
 }
@@ -108,6 +114,21 @@ is_offered_by_args = {
     [
         {
             'label': 'isOfferedBy',
+            'category': 'predicate',
+            'associated_subject': 'Course',
+            'associated_object': 'Department'
+        }
+    ]
+}
+
+is_course_in_entry_args = {
+    'label': 'isCourseIn',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'isCourseIn',
             'category': 'predicate',
             'associated_subject': 'Course',
             'associated_object': 'Department'
@@ -279,6 +300,12 @@ course_entry_args = {
         },
         {
             'label': 'Course',
+            'category': 'subject',
+            'associated_predicate': 'isCourseIn',
+            'associated_object': 'Department'
+        },
+        {
+            'label': 'Course',
             'category': 'object',
             'associated_predicate': 'offers',
             'associated_subject': 'Department'
@@ -318,6 +345,12 @@ nlu_entry_args = {
         },
         {
             'label': 'NLU',
+            'category': 'subject',
+            'associated_predicate': 'isCourseIn',
+            'associated_object': 'ICT'
+        },
+        {
+            'label': 'NLU',
             'category': 'object',
             'associated_predicate': 'isInstructorOf',
             'associated_subject': 'ProfDung'
@@ -341,6 +374,12 @@ ict_entry_args = {
             'label': 'ICT',
             'category': 'object',
             'associated_predicate': 'isOfferedBy',
+            'associated_subject': 'NLU'
+        },
+        {
+            'label': 'ICT',
+            'category': 'object',
+            'associated_predicate': 'isCourseIn',
             'associated_subject': 'NLU'
         },
         {
@@ -470,5 +509,6 @@ lexicon.add_entries([
     wae_entry_args,
     dept_entry_args,
     offers_entry_args,
-    is_offered_by_args
+    is_offered_by_args,
+    is_course_in_entry_args
 ])

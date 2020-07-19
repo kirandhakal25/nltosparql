@@ -250,7 +250,7 @@ def generate_triple_non_reln(query, pipeline, target):
     subject_flag = True
     prep_flag = True
     cop_flag = True
-    amod_flag = True
+    amod_flag = False
     wz= ''
     for sentence in doc.sentences:
         for word in sentence.words:
@@ -265,8 +265,9 @@ def generate_triple_non_reln(query, pipeline, target):
                 elif word.upos == 'PRON':
                     wx = root
                 subject_flag = False
-            if word.deprel == 'amod' and amod_flag == True:
+            if word.deprel == 'amod':
                 mod = word
+                amod_flag = True
     for sentence in doc.sentences:
         for word in sentence.words:
             if word.deprel == 'case' and prep_flag:
@@ -277,7 +278,10 @@ def generate_triple_non_reln(query, pipeline, target):
                     pred = wx.text + '_' + wy
                     objects.append(wz)
                 elif word.text == 'in':
-                    pred = wx.text + '(' + mod.text + ')'
+                    if amod_flag == True:
+                        pred = wx.text + '(' + mod.text + ')'
+                    elif amod_flag == False:
+                        pred = wx.text
                     wz = sentence.words[word.head - 1].text
                     objects.append(wz)
 
@@ -310,17 +314,18 @@ if __name__ == '__main__':
     nlp = stanza.Pipeline(**param_dict)
     # doc = nlp("Which is the shortest and longest river in America?")
     # doc = nlp("Who are the professors of NLU and DSA?")
-    doc = nlp("Who is the oldest instructor in ICT?")
+    # doc = nlp("Which is the highest mountain in Germany?")
     # doc = nlp("What is Angela's birth name?")
+    # doc = nlp(
     # doc = nlp("Which rivers and lakes traverse Alaska")
-    # doc = nlp("Who is the professor and TA of NLU?")
-    # doc = nlp("What is the salary of Dung?")
+    # doc = nlp("Who is the instructor of NLU?")
+    doc = nlp("What are the courses in ICT?")
     # doc = nlp("What is the longest river in Nepal and India?")
 
     target_words = target.get_targets(doc)
     targets = []
     for target_word in target_words:
-        targets.append(target_word.text.lower())
+        targets.append(target_word.text.strip("s").lower())
     triples = get_user_triples_non_relational(doc, nlp, targets)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
