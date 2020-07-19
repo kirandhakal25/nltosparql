@@ -308,11 +308,12 @@ if __name__ == '__main__':
     nlp = stanza.Pipeline(**param_dict)
     # doc = nlp("Which is the shortest and longest river in America?")
     # doc = nlp("Who are the professors of NLU and DSA?")
-    doc = nlp("Which is the highest mountain in Germany?")
+    # doc = nlp("Which is the highest mountain in Germany?")
     # doc = nlp("What is Angela's birth name?")
+    # doc = nlp(
     # doc = nlp("Which rivers and lakes traverse Alaska")
     # doc = nlp("Who is the professor and TA of NLU?")
-    # doc = nlp("What is the salary of Dung?")
+    doc = nlp("What is the salary of Dung?")
     # doc = nlp("What is the longest river in Nepal and India?")
 
 
