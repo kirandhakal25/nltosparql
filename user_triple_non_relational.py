@@ -250,7 +250,7 @@ def generate_triple_non_reln(query, pipeline, target):
     subject_flag = True
     prep_flag = True
     cop_flag = True
-    amod_flag = True
+    amod_flag = False
     wz= ''
     for sentence in doc.sentences:
         for word in sentence.words:
@@ -265,8 +265,9 @@ def generate_triple_non_reln(query, pipeline, target):
                 elif word.upos == 'PRON':
                     wx = root
                 subject_flag = False
-            if word.deprel == 'amod' and amod_flag == True:
+            if word.deprel == 'amod':
                 mod = word
+                amod_flag = True
     for sentence in doc.sentences:
         for word in sentence.words:
             if word.deprel == 'case' and prep_flag:
@@ -277,7 +278,10 @@ def generate_triple_non_reln(query, pipeline, target):
                     pred = wx.text + '_' + wy
                     objects.append(wz)
                 elif word.text == 'in':
-                    pred = wx.text + '(' + mod.text + ')'
+                    if amod_flag == True:
+                        pred = wx.text + '(' + mod.text + ')'
+                    elif amod_flag == False:
+                        pred = wx.text
                     wz = sentence.words[word.head - 1].text
                     objects.append(wz)
 
@@ -314,8 +318,8 @@ if __name__ == '__main__':
     # doc = nlp("What is Angela's birth name?")
     # doc = nlp(
     # doc = nlp("Which rivers and lakes traverse Alaska")
-    # doc = nlp("Who is the professor and TA of NLU?")
-    doc = nlp("What is the salary of Dung?")
+    # doc = nlp("Who is the instructor of NLU?")
+    doc = nlp("What are the courses in ICT?")
     # doc = nlp("What is the longest river in Nepal and India?")
 
     target_words = target.get_targets(doc)
