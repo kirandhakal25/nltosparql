@@ -1,7 +1,8 @@
 import stanza
 import re
 
-def get_user_triples(doc):
+
+def get_user_triples_non_relational(doc, pipeline, targets):
     subjects = []
     predicates = []
     objs = []
@@ -14,12 +15,14 @@ def get_user_triples(doc):
     if is_compound:
         queries, cc = break_compound_non_reln(doc, rule)
         for query in queries:
-            ss, ps, os = generate_triple_non_reln(query)
+            ss, ps, os = generate_triple_non_reln(query, pipeline, targets[0])
+            # print(ss)
+            # print(ps)
             subjects = subjects + ss
             predicates = predicates + ps
             objs = objs + os
     else:
-        ss, ps, os = generate_triple_non_reln(doc.text)
+        ss, ps, os = generate_triple_non_reln(doc.text, pipeline, targets[0])
         # print(ss)
         # print(ps)
         subjects = subjects + ss
@@ -237,9 +240,8 @@ def break_compound_non_reln(doc, rule):
         return queries, cc
 
 
-
-def generate_triple_non_reln(query):
-    doc = nlp(query)
+def generate_triple_non_reln(query, pipeline, target):
+    doc = pipeline(query)
     subjects = []
     objects = []
     predicates = []
@@ -272,21 +274,22 @@ def generate_triple_non_reln(query):
                     wy = word.text
                     prep_flag = False
                     pred = wx.text + '_' + wy
-                    subjects.append(wz)
+                    objects.append(wz)
                 elif word.text == 'in':
                     pred = wx.text + '(' + mod.text + ')'
                     wz = sentence.words[word.head - 1].text
-                    subjects.append(wz)
+                    objects.append(wz)
+
                     # print('--------')
                     # print(word.deprel, word.text, '-', word.head, '-', sentence.words[word.head - 1].text)
                 elif word.text == "'s" and cop_flag:
                     wy = sentence.words[word.head - 1]
                     if sentence.words[wy.head - 1].text == wx.text:
                         pred = wx.text
-                        subjects.append(wy.text)
-                    cop_flag = False
+                        cop_flag = False
+                        objects.append(wy.text)
         predicates.append(pred)
-        objects.append('?k')
+        subjects.append(target.capitalize())
 
     # print(subjects)
     # print(predicates)
@@ -313,7 +316,7 @@ if __name__ == '__main__':
     # doc = nlp("What is the longest river in Nepal and India?")
 
 
-    triples = get_user_triples(doc)
+    triples = get_user_triples_non_relational(doc, nlp)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
         print(subject, predicate, obj)

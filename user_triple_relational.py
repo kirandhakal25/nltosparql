@@ -2,20 +2,34 @@ import stanza
 import re
 
 
-def get_user_triples(doc, pipeline):
+def get_user_triples_relational(doc, pipeline):
     subjects = []
     predicates = []
     objs = []
 
     is_compound, rule = compound_relational(doc)
+    is_verb_end = verbend(doc)
+    # if the sentence is a compound sentence, break into simple sentences and generate triples for both of them
     if is_compound:
         queries = break_compound_relational(doc, rule)
-        # print(queries)
         for query in queries:
-            ss, ps, os = generate_triple_relational(query, pipeline)
-            subjects = subjects + ss
-            predicates = predicates + ps
-            objs = objs + os
+            if not query.lower().startswith("wh"):
+                ss, ps, os = generate_triple_relational(query, pipeline)
+                subjects = subjects + ss
+                predicates = predicates + ps
+                objs = objs + os
+            else:
+                ss, ps, os = generate_triple_who_relational(query, pipeline)
+                subjects = subjects + ss
+                predicates = predicates + ps
+                objs = objs + os
+    # If the sentence ends with a verb eg. "Which subject does ProfDung teach?"
+    elif is_verb_end:
+        ss, ps, os = generate_triple_relational_verbend(doc.text, pipeline)
+        subjects = subjects + ss
+        predicates = predicates + ps
+        objs = objs + os
+    # If the sentence is a Wh relational question that does not end with a verb
     elif doc.text.capitalize().startswith("Wh"):
         ss, ps, os = generate_triple_who_relational(doc.text, pipeline)
         subjects = subjects + ss
@@ -27,6 +41,22 @@ def get_user_triples(doc, pipeline):
         predicates = predicates + ps
         objs = objs + os
     return zip(subjects, predicates, objs)
+
+def verbend(doc):
+    upos_string = ""
+    verb_upos_patterns = [
+        ".* (PROPN|NOUN) VERB$"
+    ]
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            upos_string = upos_string + word.upos + " "
+    upos_string = upos_string.strip()
+    for pattern in verb_upos_patterns:
+        vend = bool(re.search(pattern, upos_string))
+        if vend:
+            return vend
+    return vend
+
 
 def compound_relational(doc):
     upos_string = ""
@@ -336,7 +366,7 @@ def generate_triple_who_relational(query, pipeline):
 
     for sentence in doc.sentences:
         for word in sentence.words:
-            print(f'{word.text} \t {sentence.words[word.head - 1].text} \t {word.deprel}')
+            # print(f'{word.text} \t {sentence.words[word.head - 1].text} \t {word.deprel}')
             if word.deprel == 'nsubj':
                 subjects.append("?" + word.text.lower())
             if word.deprel == 'obj':
@@ -347,6 +377,32 @@ def generate_triple_who_relational(query, pipeline):
             #     targets.append(word)
 
     return subjects, predicates, objs
+
+def generate_triple_relational_verbend(query, pipeline):
+    doc = pipeline(query)
+    subjects = []
+    objs = []
+    predicates = []
+    we = ""
+    wh = ""
+    wi = ""
+    wj = ""
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            # print(f'{word.text} \t {sentence.words[word.head - 1].text} \t {word.deprel} \t {word.upos}')
+            if word.deprel == 'obl' or word.deprel == 'obj':
+                we = sentence.words[word.head - 1].text
+                wh = word.text
+            elif word.deprel == 'root':
+                wj = word.text
+            elif word.deprel == 'nsubj':
+                wj = sentence.words[word.head -1].text
+                wi = word.text
+    subjects.append(wi)
+    predicates.append(wj)
+    objs.append(wh)
+    return subjects, predicates, objs
+
 
 
 if __name__ == '__main__':
@@ -363,13 +419,17 @@ if __name__ == '__main__':
     # doc = nlp("Which female actor is married to writer born in Rome and played in Casablanca")
     doc = nlp("Which rivers traverse Mississippi or Alaska")
     doc = nlp("who killed Caesar?")
+    doc = nlp("In which continent does the Nile traverse")
     # doc = nlp("Which is the least and most populated state in America") # Dependency relation not correctly given by stanza
     # Needs handling adjective part to handle most populated state and least populated state.
     # doc = nlp("Which is the most and least populated state in America") # However, dependency relation given by stanza for this is correct
     # for sentence in doc.sentences:
     #     for word in sentence.words:
     #         print(f'{word.text} \t {sentence.words[word.head-1].text} \t {word.deprel}')
-    triples = get_user_triples(doc, nlp)
+    doc = nlp("In which continent does the Nile traverse")
+    doc = nlp("Which course does ProfDung teach")
+    # triples = generate_triple_relational_verbend(doc.text, nlp)
+    triples = get_user_triples_relational(doc, nlp)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
         print(subject, predicate, obj)

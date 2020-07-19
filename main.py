@@ -1,9 +1,44 @@
 import argparse
 from target import get_targets
-from user_triple_relational import get_user_triples
-from ontotriple import map_user_to_lexicon, lexicon
+from user_triple_relational import get_user_triples_relational
+from user_triple_non_relational import get_user_triples_non_relational
+from ontotriple import map_user_to_lexicon
+from lexicon_ontology import lexicon
 from query_construction import construct_query
 import stanza
+import re
+
+
+def relational(doc):
+    relational_patterns = [
+        "DET NOUN VERB PROPN",
+        "PRON VERB PROPN",
+        "NOUN VERB ADP PROPN",
+        "PRON VERB ADP PROPN",
+        "NOUN VERB ADP DET NOUN",
+        "CCONJ NOUN VERB PROPN",
+        ".* (PROPN|NOUN) VERB$"
+    ]
+    non_relational_patterns = [
+        "PRON AUX PROPN PART NOUN",
+        "PRON AUX DET ADJ CCONJ ADJ NOUN"
+    ]
+    rel = False
+    upos_sentence = ""
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            upos_sentence = upos_sentence + word.upos + " "
+    upos_sentence = upos_sentence.strip()
+    for pattern in relational_patterns:
+        rel = bool(re.search(pattern, upos_sentence))
+        if rel:
+            return True
+    for pattern in non_relational_patterns:
+        rel = bool(re.search(pattern, upos_sentence))
+        if rel:
+            return False
+    return rel
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='NL to SPARQL interface.')
@@ -20,7 +55,10 @@ if __name__ == "__main__":
     }
 
     nlp = stanza.Pipeline(**param_dict)
-    text = nlp(args.input)
+
+    text = args.input
+    text = text.strip('?')
+    text = nlp(text)
 
     # Identify targets
     # and extract string from word object
@@ -36,7 +74,11 @@ if __name__ == "__main__":
     [print("Targets identified: ", target) for target in targets]
 
     # Get user triples
-    triples = get_user_triples(text, nlp)
+
+    if relational(text):
+        triples = get_user_triples_relational(text, nlp)
+    else:
+        triples = get_user_triples_non_relational(text, nlp, targets)
 
     user_triples = []
     print("\nUser triples: ")
@@ -58,4 +100,5 @@ if __name__ == "__main__":
     print(construct_query(ontology_triples, targets))
 
     print("\nFinished conversion.")
+
 
