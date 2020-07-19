@@ -34,6 +34,57 @@ instr_entry_args = {
     ]
 }
 
+dept_entry_args = {
+    'label': 'Department',
+    'part_of_speech': 'noun',
+    'type': 'Class',
+    'ontotriples':
+    [
+        {
+            'label': 'Department',
+            'category': 'subject',
+            'associated_predicate': 'offers',
+            'associated_object': 'Course'
+        },
+        {
+            'label': 'Department',
+            'category': 'object',
+            'associated_predicate': 'isOfferedBy',
+            'associated_subject': 'Course'
+        }
+    ]
+}
+
+offers_entry_args = {
+    'label': 'offers',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'offers',
+            'category': 'predicate',
+            'associated_subject': 'Department',
+            'associated_object': 'Course'
+        }
+    ]
+}
+
+is_offered_by_args = {
+    'label': 'isOfferedBy',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'isOfferedBy',
+            'category': 'predicate',
+            'associated_subject': 'Course',
+            'associated_object': 'Department'
+        }
+    ]
+}
+
 assistant_entry_args = {
     'label': 'Assistant',
     'part_of_speech': 'noun',
@@ -174,6 +225,18 @@ course_entry_args = {
             'category': 'object',
             'associated_predicate': 'isAssistantOf',
             'associated_subject': 'Assistant'
+        },
+        {
+            'label': 'Course',
+            'category': 'subject',
+            'associated_predicate': 'isOfferedBy',
+            'associated_object': 'Department'
+        },
+        {
+            'label': 'Course',
+            'category': 'object',
+            'associated_predicate': 'offers',
+            'associated_subject': 'Department'
         }
     ]
 }
@@ -196,6 +259,18 @@ nlu_entry_args = {
             'associated_predicate': 'isTaughtBy',
             'associated_object': 'ProfDung'
         },
+{
+            'label': 'NLU',
+            'category': 'object',
+            'associated_predicate': 'offers',
+            'associated_subject': 'ICT'
+        },
+        {
+            'label': 'NLU',
+            'category': 'subject',
+            'associated_predicate': 'isOfferedBy',
+            'associated_object': 'ICT'
+        },
         {
             'label': 'NLU',
             'category': 'object',
@@ -207,6 +282,27 @@ nlu_entry_args = {
             'category': 'object',
             'associated_predicate': 'isAssistantOf',
             'associated_subject': 'Joe'
+        }
+    ]
+}
+
+ict_entry_args = {
+    'label': 'ICT',
+    'part_of_speech': 'noun',
+    'type': 'Department',
+    'ontotriples':
+    [
+        {
+            'label': 'ICT',
+            'category': 'object',
+            'associated_predicate': 'isOfferedBy',
+            'associated_subject': 'NLU'
+        },
+        {
+            'label': 'ICT',
+            'category': 'subject',
+            'associated_predicate': 'offers',
+            'associated_object': 'NLU'
         }
     ]
 }
@@ -326,5 +422,8 @@ lexicon.add_entries([
     assistant_entry_args,
     is_instructor_of_entry_args,
     is_assistant_of_entry_args,
-    wae_entry_args
+    wae_entry_args,
+    dept_entry_args,
+    offers_entry_args,
+    is_offered_by_args
 ])

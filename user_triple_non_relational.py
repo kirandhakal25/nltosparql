@@ -1,5 +1,6 @@
 import stanza
 import re
+import target
 
 
 def get_user_triples_non_relational(doc, pipeline, targets):
@@ -298,6 +299,7 @@ def generate_triple_non_reln(query, pipeline, target):
 
 
 if __name__ == '__main__':
+
     param_dict = {
         'lang': 'en',
         'processors': 'pos, lemma, tokenize, depparse',
@@ -308,15 +310,18 @@ if __name__ == '__main__':
     # doc = nlp("What is the population and area of the most populated state?")
     # doc = nlp("Which is the shortest and longest river in America?")
     # doc = nlp("Who are the professors of NLU and DSA?")
-    # doc = nlp("Which is the highest mountain in Germany?")
-    doc = nlp("What is Angela's birth name?")
+    doc = nlp("Which is the highest mountain in Germany?")
+    # doc = nlp("What is Angela's birth name?")
     # doc = nlp("Which rivers and lakes traverse Alaska")
     # doc = nlp("Who is the professor and TA of NLU?")
     # doc = nlp("What is the salary of Dung?")
     # doc = nlp("Who are the TA and professors of NLU and DSA?")
 
-
-    triples = get_user_triples_non_relational(doc, nlp)
+    target_words = target.get_targets(doc)
+    targets = []
+    for target_word in target_words:
+        targets.append(target_word.text.lower())
+    triples = get_user_triples_non_relational(doc, nlp, targets)
     print("===================TRIPLES=====================")
     for subject, predicate, obj in triples:
         print(subject, predicate, obj)
