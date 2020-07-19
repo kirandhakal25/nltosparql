@@ -275,13 +275,17 @@ def generate_triple_non_reln(query, pipeline, target):
                     wz = sentence.words[word.head - 1].text
                     wy = word.text
                     prep_flag = False
-                    pred = wx.text + '_' + wy
+                    if amod_flag == True:
+                        pred = wx.text + '_' + wy + '(' + mod.text + ')'
+                    elif amod_flag == False:
+                        pred = wx.text + '_' + wy
                     objects.append(wz)
                 elif word.text == 'in':
+                    wy = word.text
                     if amod_flag == True:
-                        pred = wx.text + '(' + mod.text + ')'
+                        pred = wx.text + '_' + wy + '(' + mod.text + ')'
                     elif amod_flag == False:
-                        pred = wx.text
+                        pred = wx.text + '_' + wy
                     wz = sentence.words[word.head - 1].text
                     objects.append(wz)
 
@@ -318,8 +322,8 @@ if __name__ == '__main__':
     # doc = nlp("What is Angela's birth name?")
     # doc = nlp(
     # doc = nlp("Which rivers and lakes traverse Alaska")
-    # doc = nlp("Who is the instructor of NLU?")
-    doc = nlp("What are the courses in ICT?")
+    doc = nlp("Who is the oldest instructor in NLU?")
+    # doc = nlp("What are the courses in ICT?")
     # doc = nlp("What is the longest river in Nepal and India?")
 
     target_words = target.get_targets(doc)
