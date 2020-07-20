@@ -34,6 +34,33 @@ instr_entry_args = {
     ]
 }
 
+rep_entry_args = {
+    'label': 'Representative',
+    'part_of_speech': 'noun',
+    'type': 'Class',
+    'ontotriples':
+    [
+        {
+            'label': 'Representative',
+            'category': 'subject',
+            'associated_predicate': 'represent',
+            'associated_object': 'Course'
+        },
+    {
+            'label': 'Representative',
+            'category': 'subject',
+            'associated_predicate': 'isRepresentativeOf',
+            'associated_object': 'Course'
+        },
+        {
+            'label': 'Representative',
+            'category': 'object',
+            'associated_predicate': 'isRepresentedBy',
+            'associated_subject': 'Course'
+        }
+    ]
+}
+
 dept_entry_args = {
     'label': 'Department',
     'part_of_speech': 'noun',
@@ -208,6 +235,21 @@ is_instructor_of_entry_args = {
     ]
 }
 
+is_rep_of_entry_args = {
+    'label': 'isRepresentativeOf',
+    'part_of_speech': 'verb',
+    'type': 'predicate',
+    'ontotriples':
+    [
+        {
+            'label': 'isRepresentativeOf',
+            'category': 'predicate',
+            'associated_subject': 'Representative',
+            'associated_object': 'Course'
+        }
+    ]
+}
+
 is_instructor_in_entry_args = {
     'label': 'isInstructorIn',
     'part_of_speech': 'verb',
@@ -360,6 +402,12 @@ nlu_entry_args = {
             'category': 'object',
             'associated_predicate': 'isAssistantOf',
             'associated_subject': 'Joe'
+        },
+        {
+            'label': 'NLU',
+            'category': 'object',
+            'associated_predicate': 'isRepresentativeOf',
+            'associated_subject': 'Watsamon'
         }
     ]
 }
@@ -394,7 +442,7 @@ ict_entry_args = {
 matt_entry_args = {
     'label': 'ProfMatt',
     'part_of_speech': 'noun',
-    'type': 'instructor',
+    'type': 'Instructor',
     'ontotriples':
         [
             {
@@ -472,7 +520,7 @@ wae_entry_args = {
 dung_entry_args = {
     'label': 'ProfDung',
     'part_of_speech': 'noun',
-    'type': 'instructor',
+    'type': 'Instructor',
     'ontotriples':
     [
         {
@@ -496,6 +544,27 @@ dung_entry_args = {
     ]
 }
 
+jou_entry_args = {
+    'label': 'Watsamon',
+    'part_of_speech': 'noun',
+    'type': 'Representative',
+    'ontotriples':
+    [
+        {
+            'label': 'Watsamon',
+            'category': 'subject',
+            'associated_predicate': 'represents',
+            'associated_object': 'NLU'
+        },
+        {
+            'label': 'Watsamon',
+            'category': 'subject',
+            'associated_predicate': 'isRepresentativeOf',
+            'associated_object': 'NLU'
+        }
+    ]
+}
+
 lexicon.add_entries([
     instr_entry_args,
     teach_entry_args,
@@ -510,5 +579,8 @@ lexicon.add_entries([
     dept_entry_args,
     offers_entry_args,
     is_offered_by_args,
-    is_course_in_entry_args
+    is_course_in_entry_args,
+    rep_entry_args,
+    jou_entry_args,
+    is_rep_of_entry_args
 ])

@@ -1,19 +1,17 @@
 # relational queries
 Who teaches NLU?
-What killed Caesar?
 Which instructor teaches NLU?
+Which instructor and assistant teaches NLU?
+Which instructor teaches NLU and DSA?
+Which course does ProfDung teach?
 
 
 # non-relational queries
-What does ProfDung teach?
-Where is AIT?
-Who is NLU taught by?
 Who is the instructor of NLU?
-Who are the instructors of NLU and DSA?
-What is the highest building in AIT?
-How many students are there in AIT?
+Who is the instructor and representative of NLU?
+What are the instructors of NLU and WAE? ** that works
+Who are the instructors of NLU and WAE? ** no work bcuz stanford sucks
 
 # Issues currently
 What teaches NLU? -> Getting x lexicon with med is getting WAE.
-Which instructor teaches NLU and DSA? -> not enough targets
 
